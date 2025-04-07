@@ -320,7 +320,7 @@
       login(){
         console.log(this.user,this.password);
         var user_seed_hash = CryptoJS.SHA256(this.user).toString(CryptoJS.enc.Hex);
-        var password_seed_hash = CryptoJS.SHA256(password_seed).toString(CryptoJS.enc.Hex);
+        var password_seed_hash = CryptoJS.SHA256(this.password).toString(CryptoJS.enc.Hex);
         if(user_seed_hash=='b7766cf93f0fcbcfa13adcc202419a4e5f21816f70360b6e76fd18342b56fdd8'&&password_seed_hash=='4d4f26369171994f3a46776ee2d88494fb9955800a5bb6261c016c4bb9f30b56'){
           this.auth=true;
           console.log('Login successful!');
