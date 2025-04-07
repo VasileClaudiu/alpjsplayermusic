@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alpine Auth App</title>
+    <script src="assets/js/alpine.min.js" defer></script>
+    <script src="assets/js/crypto-js.min.js"></script>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <script>
+      document.addEventListener("alpine:init", () => {
+        Alpine.store("darkMode", {
+          on: false,
+
+          toggle() {
+            this.on = !this.on;
+          },
+        });
+      });
+    </script>
+  </head>
+  <body
+    x-data="{
+      user: '',
+      password: '',
+      auth:false,
+      audioSrc:'',
+      videoSrc:'',
+      avswitch:false,
+      selectedMelody:0,
+      playerList:[
+        {
+          id:1,
+          category: 1,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Adrian-Minune--Asa-Sunt-Zilele-Mele--Muzica-Originala-BKlliqNq.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Adrian-Minune--Asa-Sunt-Zilele-Mele--Muzica-Originala-p2DEzMI-.mp3',
+          multi_files: false,
+          title: 'Adrian Minune Asa Sunt Zilele Mele Muzica Originala',
+          url: 'https://lost-ways.com/slim/public/videos_download/lWZzlHQXhkQ/Adrian-Minune--Asa-Sunt-Zilele-Mele--Muzica-Originala-.mp4',
+          youtube: 'https://www.youtube.com/watch?v=lWZzlHQXhkQ',
+        },
+        {
+          id:2,
+          category: 1,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Formatia-Expres--5-bani-10-bani-15--25-de-bani--HITul-Petrecerilor--Hore-Sarbe-CR1RrNiD.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Formatia-Expres--5-bani-10-bani-15--25-de-bani--HITul-Petrecerilor--Hore-Sarbe-CIInBKom.mp3',
+          multi_files: false,
+          title: 'Formatia Expres 5 bani 10 bani 15 25 de bani HITul Petrecerilor Hore Sarbe',
+          url: 'https://lost-ways.com/slim/public/videos_download/08pPPSZm9rw/Formatia-Expres--5-bani-10-bani-15--25-de-bani--HITul-Petrecerilor--Hore-Sarbe.mp4',
+          youtube: 'https://www.youtube.com/watch?v=08pPPSZm9rw',
+        },
+        {
+          id:3,
+          category: 2,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Alessio--Misco-misco-video-oficial-BqeLUXbI.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Alessio--Misco-misco-video-oficial-CEoANejj.mp3',
+          multi_files: false,
+          title: 'Alessio Misco misco video oficial',
+          url: 'https://lost-ways.com/slim/public/videos_download/lo0Scb-j5Yo/Alessio--Misco-misco-video-oficial.mp4',
+          youtube: 'https://www.youtube.com/watch?v=lo0Scb-j5Yo',
+        },
+        {
+          id:4,
+          category: 2,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/COSTEL-BIJUCBXIa-uitativa-la-eaZiua-lui-Bryana-RKB-C3N7DVQ2.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/COSTEL-BIJUCBXIa-uitativa-la-eaZiua-lui-Bryana-RKB-CHoSYf9-.mp3',
+          multi_files: false,
+          title: 'COSTEL BIJU CBX I-a uitativa la ea, Ziua lui Bryana',
+          url: 'https://lost-ways.com/slim/public/videos_download/uFqe2ih7qPA/COSTEL-BIJUCBXIa-uitativa-la-eaZiua-lui-Bryana-RKB.mp4',
+          youtube: 'https://www.youtube.com/watch?v=uFqe2ih7qPA',
+        },
+        {
+          id:5,
+          category: 2,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/BABASHA--Iama-Duma---Oficial-Video-B34hicsy.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/BABASHA--Iama-Duma---Oficial-Video-D6cLOQ8C.mp3',
+          multi_files: false,
+          title: 'BABASHA Iama Duma Oficial',
+          url: 'https://lost-ways.com/slim/public/videos_download/r4ZMZd6wKxQ/BABASHA--Iama-Duma---Oficial-Video.mp4',
+          youtube: 'https://www.youtube.com/watch?v=r4ZMZd6wKxQ',
+        },
+        {
+          id:6,
+          category: 1,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/PROGRAM-SARBE-SI-HORE-2024-COLAJ-DYDmx0Ff.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/PROGRAM-SARBE-SI-HORE-2024-COLAJ-B3vws4Es.mp3',
+          multi_files: false,
+          title: 'PROGRAM SARBE SI HORE 2024 COLAJ',
+          url: 'https://lost-ways.com/slim/public/videos_download/58rvRo4Qtro/PROGRAM-SARBE-SI-HORE-2024-COLAJ.mp4',
+          youtube: 'https://www.youtube.com/watch?v=58rvRo4Qtro',
+        },
+        {
+          id:7,
+          category: 2,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Cele-Mai-Tari-Manele-2025--Top-Muzica-Manele-2025--Mix-Manele-2025-Bgo_gQj7.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Cele-Mai-Tari-Manele-2025--Top-Muzica-Manele-2025--Mix-Manele-2025-BabDBNya.mp3',
+          multi_files: false,
+          title: 'Cele Mai Tari Manele 2025 Top Muzica Manele 2025 Mix Manele 2025',
+          url: 'https://lost-ways.com/slim/public/videos_download/71qlnPO9IuQ/Cele-Mai-Tari-Manele-2025--Top-Muzica-Manele-2025--Mix-Manele-2025.mp4',
+          youtube: 'https://www.youtube.com/watch?v=71qlnPO9IuQ',
+        },
+        {
+          id:8,
+          category: 1,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Irina-Loghin--Roata-vietii--CD--Roata-vietii-360p-CDArFSe3.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Irina-Loghin--Roata-vietii--CD--Roata-vietii-360p-C7OZYYxX.mp3',
+          multi_files: false,
+          title: 'Irina Loghin Roata vietii CD Roata vietii 360p',
+          url: 'https://lost-ways.com/slim/public/videos_download/6DA2zE8tX8Y/Irina-Loghin--Roata-vietii--CD--Roata-vietii-360p.mp4',
+          youtube: 'https://www.youtube.com/watch?v=jdfhJDHIBhc',
+        },
+        {
+          id:9,
+          category: 1,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/COLAJ-MANELE-VECHI-PENTRU-REVELION-20212022GEORGIANA-LOBONTCLAUDIA-PUICANARMIN-NICOARA-VT4YZI4A.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/COLAJ-MANELE-VECHI-PENTRU-REVELION-20212022GEORGIANA-LOBONTCLAUDIA-PUICANARMIN-NICOARA-K_cVZxDJ.mp3',
+          multi_files: false,
+          title: 'COLAJ MANELE VECHI PENTRU REVELION 2021 2022 GEORGIANA LOBONT CLAUDIA PUICAN ARMIN NICOARA',
+          url: 'https://lost-ways.com/slim/public/videos_download/4Y8JENrz9Cs/COLAJ-MANELE-VECHI-PENTRU-REVELION-20212022GEORGIANA-LOBONTCLAUDIA-PUICANARMIN-NICOARA.mp4',
+          youtube: 'https://www.youtube.com/watch?v=4Y8JENrz9Cs',
+        },
+        {
+          id:10,
+          category: 1,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Georgiana-Lobont--Manele-Vechi-de-Petrecere--Manele-Revelion-2025--Colaj-Manele-Vechi-DSu-Y23W.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Georgiana-Lobont--Manele-Vechi-de-Petrecere--Manele-Revelion-2025--Colaj-Manele-Vechi-B7McMOYu.mp3',
+          multi_files: false,
+          title: 'Georgiana Lobont Manele Vechi de Petrecere Manele Revelion 2025 Colaj Manele Vechi',
+          url: 'https://lost-ways.com/slim/public/videos_download/ONwH0SDNnXE/Georgiana-Lobont--Manele-Vechi-de-Petrecere--Manele-Revelion-2025--Colaj-Manele-Vechi.mp4',
+          youtube: 'https://www.youtube.com/watch?v=ONwH0SDNnXE',
+        },
+        {
+          id:11,
+          category: 3,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Cea-Mai-Ascultata-Muzica-Romaneasca-2025--Melodii-Romanesti-2025-Mix--Top-Muzica-Romaneasca-2025-BXNcTHji.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Cea-Mai-Ascultata-Muzica-Romaneasca-2025--Melodii-Romanesti-2025-Mix--Top-Muzica-Romaneasca-2025-BCIZmvoC.mp3',
+          multi_files: false,
+          title: 'Cea Mai Ascultata Muzica Romaneasca 2025 Melodii Romanesti 2025 Mix Top Muzica Romaneasca 2025',
+          url: 'https://lost-ways.com/slim/public/videos_download/IY1FBa5dtSc/Cea-Mai-Ascultata-Muzica-Romaneasca-2025--Melodii-Romanesti-2025-Mix--Top-Muzica-Romaneasca-2025.mp4',
+          youtube: 'https://www.youtube.com/watch?v=IY1FBa5dtSc',
+        },
+        {
+          id:12,
+          category: 2,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/NEK--Cate-una-cate-doua-OFFICIAL-VIDEO-DSQayeOm.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/NEK--Cate-una-cate-doua-OFFICIAL-VIDEO-BY_X4syb.mp3',
+          multi_files: false,
+          title: 'NEK Cate una cate doua OFFICIAL VIDEO',
+          url: 'https://lost-ways.com/slim/public/videos_download/5zwJoIFHhPQ/NEK--Cate-una-cate-doua-OFFICIAL-VIDEO.mp4',
+          youtube: 'https://www.youtube.com/watch?v=5zwJoIFHhPQ',
+        },
+        {
+          id:13,
+          category: 2,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/MegaColaj-de-Revelion-2025--SuperHITURILE-Anului-2024Mix-O-Ora-HITURI-de-Succes-20242025-quGVXEAH.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/MegaColaj-de-Revelion-2025--SuperHITURILE-Anului-2024Mix-O-Ora-HITURI-de-Succes-20242025-DGtlCugj.mp3',
+          multi_files: false,
+          title: 'MegaColaj de Revelion 2025 Super HITURILE Anului 2024 Mix O Ora HITURI de Succes 2024 2025',
+          url: 'https://lost-ways.com/slim/public/videos_download/Z1JDYDasafg/MegaColaj-de-Revelion-2025--SuperHITURILE-Anului-2024Mix-O-Ora-HITURI-de-Succes-20242025.mp4',
+          youtube: 'https://www.youtube.com/watch?v=Z1JDYDasafg',
+        },
+        {
+          id:14,
+          category: 3,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Romanian-Music-2025-Hit-List--Top-Romanian-Radio-Hits-2024--Best-Songs-2025-Romania-1-B3SZR8VR.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Romanian-Music-2025-Hit-List--Top-Romanian-Radio-Hits-2024--Best-Songs-2025-Romania-1-D7nyaXzT.mp3',
+          multi_files: false,
+          title: 'Romanian Music 2025 Hit List Top Romanian Radio Hits 2024 Best Songs 2025 Romania 1',
+          url: 'https://lost-ways.com/slim/public/videos_download/wzd7Hz1xH2Q/Romanian-Music-2025-Hit-List--Top-Romanian-Radio-Hits-2024--Best-Songs-2025-Romania-1.mp4',
+          youtube: 'https://www.youtube.com/watch?v=wzd7Hz1xH2Q',
+        },
+        {
+          id:15,
+          category: 3,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/JUNO--Iubire-cu-Parfum-de-Lavanda-OST-Coqbp6U-.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/JUNO--Iubire-cu-Parfum-de-Lavanda-OST-Bv-YSDjA.mp3',
+          multi_files: false,
+          title: 'JUNO Iubire cu Parfum de Lavanda OST',
+          url: 'https://lost-ways.com/slim/public/videos_download/q3lXDcUHB14/JUNO--Iubire-cu-Parfum-de-Lavanda-OST.mp4',
+          youtube: 'https://www.youtube.com/watch?v=q3lXDcUHB14',
+        },
+        {
+          id:16,
+          category: 1,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Laurentiu-Craciun--Femeia-Frumoasa--Cover--LIVE-2024-B9wJOi3U.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Laurentiu-Craciun--Femeia-Frumoasa--Cover--LIVE-2024-Ez9oAYyi.mp3',
+          multi_files: false,
+          title: 'Laurentiu Craciun Femeia Frumoasa Cover LIVE 2024',
+          url: 'https://lost-ways.com/slim/public/videos_download/zQEM14SCqoE/Laurentiu-Craciun--Femeia-Frumoasa--Cover--LIVE-2024.mp4',
+          youtube: 'https://www.youtube.com/watch?v=zQEM14SCqoE',
+        },
+        {
+          id:17,
+          category: 1,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Taraful-Leo-de-la-Rosiori--Colaj-Nou-Live-2024-B7uqhs5K.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Taraful-Leo-de-la-Rosiori--Colaj-Nou-Live-2024-BDOpWPXj.mp3',
+          multi_files: false,
+          title: 'Taraful Leo de la Rosiori Colaj Nou Live 2024',
+          url: 'https://lost-ways.com/slim/public/videos_download/de1NFkKih84/Taraful-Leo-de-la-Rosiori--Colaj-Nou-Live-2024.mp4',
+          youtube: 'https://www.youtube.com/watch?v=de1NFkKih84',
+        },
+        {
+          id:18,
+          category: 1,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Vine-BOMBA-Anului--cu-Leo-de-la-Rosiori--Ork-TURNENII--Muzica-de-petrecere----SHOW-Total-Dd-jJZyG.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Vine-BOMBA-Anului--cu-Leo-de-la-Rosiori--Ork-TURNENII--Muzica-de-petrecere----SHOW-Total-DCB4FjA9.mp3',
+          multi_files: false,
+          title: 'Vine BOMBA Anului cu Leo de la Rosiori Ork TURNENII Muzica de petrecere SHOW Total',
+          url: 'https://lost-ways.com/slim/public/videos_download/EgOoFWVJ3Hg/Vine-BOMBA-Anului--cu-Leo-de-la-Rosiori--Ork-TURNENII--Muzica-de-petrecere----SHOW-Total.mp4',
+          youtube: 'https://www.youtube.com/watch?v=EgOoFWVJ3Hg',
+        },
+        {
+          id:19,
+          category: 1,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Leo-de-la-Rosiori--Nicu-Boieru-Dragostea---ca--pe--Vlașca-Concert-Evolutie--Live-2024-Dln8woAZ.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Leo-de-la-Rosiori--Nicu-Boieru-Dragostea---ca--pe--Vlașca-Concert-Evolutie--Live-2024-uBoRQLMn.mp3',
+          multi_files: false,
+          title: 'Leo de la Rosiori Nicu Boieru Dragostea ca pe Vlașca Concert Evolutie Live 2024',
+          url: 'https://lost-ways.com/slim/public/videos_download/NvrPouuFN-I/Leo-de-la-Rosiori--Nicu-Boieru-Dragostea---ca--pe--Vla%C8%99ca-Concert-Evolutie--Live-2024.mp4',
+          youtube: 'https://www.youtube.com/watch?v=NvrPouuFN-I',
+        },
+        {
+          id:20,
+          category: 1,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Diana-Matei--Leo-de-la-Rosiori--Am-atins-cerul-cu-mana--Concert-Evolutie--Live-2024-D9wlRqza.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Diana-Matei--Leo-de-la-Rosiori--Am-atins-cerul-cu-mana--Concert-Evolutie--Live-2024-rT-j5pEW.mp3',
+          multi_files: false,
+          title: 'Diana Matei Leo de la Rosiori Am atins cerul cu mana Concert Evolutie Live 2024',
+          url: 'https://lost-ways.com/slim/public/videos_download/UZvzW5TFylc/Diana-Matei--Leo-de-la-Rosiori--Am-atins-cerul-cu-mana--Concert-Evolutie--Live-2024.mp4',
+          youtube: 'https://www.youtube.com/watch?v=UZvzW5TFylc',
+        },
+        {
+          id:21,
+          category: 2,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Vali-Vijelie--Luis-Gabriel--Laura--Costel-Biju---Colaj-Manele-2024-XLSgX7Ha.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Vali-Vijelie--Luis-Gabriel--Laura--Costel-Biju---Colaj-Manele-2024--_rV1cxC.mp3',
+          multi_files: false,
+          title: 'Vali Vijelie Luis Gabriel Laura Costel Biju Colaj Manele 2024',
+          url: 'https://lost-ways.com/slim/public/videos_download/QrdIJcosWX8/Vali-Vijelie--Luis-Gabriel--Laura--Costel-Biju---Colaj-Manele-2024.mp4',
+          youtube: 'Vali Vijelie Luis Gabriel Laura Costel Biju Colaj Manele 2024',
+        },
+        {
+          id:22,
+          category: 1,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Vali-Vijelie--GeorgianaLobont---Beau-ca-nu-am-doua-vieti-OFFICIAL-VIDEO-2024-DrsLJIcD.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Vali-Vijelie--GeorgianaLobont---Beau-ca-nu-am-doua-vieti-OFFICIAL-VIDEO-2024-8kvaqG-H.mp3',
+          multi_files: false,
+          title: 'Vali Vijelie Georgiana Lobont Beau ca nu am doua vieti OFFICIAL VIDEO 2024',
+          url: 'https://lost-ways.com/slim/public/videos_download/SXDqo1nGNso/Vali-Vijelie--GeorgianaLobont---Beau-ca-nu-am-doua-vieti-OFFICIAL-VIDEO-2024.mp4',
+          youtube: 'https://www.youtube.com/watch?v=SXDqo1nGNso',
+        },
+        {
+          id:23,
+          category: 1,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Georgiana Lobont - Colaj cu Cele Mai Faine Duete 2024 - Georgiana Lobont 720p h264-DZoYi0zl.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Georgiana Lobont - Colaj cu Cele Mai Faine Duete 2024 - Georgiana Lobont 720p h264-KF1z85XU.mp3',
+          multi_files: false,
+          title: 'Georgiana Lobont Colaj cu Cele Mai Faine Duete 2024 Georgiana Lobont 720p h264',
+          url: 'https://lost-ways.com/slim/public/videos_download/2eReVCk08oc/Georgiana_Lobont_Colaj_cu_Cele_Mai_Faine_Duete_2024_Georgiana_Lobont_720p_h264_Db_ZXmYC.mp4',
+          youtube: 'https://www.youtube.com/watch?v=c-CRr-o_hYM',
+        },
+        {
+          id:24,
+          category: 2,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Dani-Mocanu--RUSIA--Official-Video-C6YM8x3K.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Dani-Mocanu--RUSIA--Official-Video-PDH-r7TA.mp3',
+          multi_files: false,
+          title: 'Dani Mocanu RUSIA Official Video',
+          url: 'https://lost-ways.com/slim/public/videos_download/pXEGZ0V0rvw/Dani-Mocanu--RUSIA--Official-Video.mp4',
+          youtube: 'https://www.youtube.com/watch?v=pXEGZ0V0rvw',
+        },
+        {
+          id:25,
+          category: 1,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Carmen-de-la-Salciua-2024--2-ORE-CELE-MAI-ASCULTATE-MELODII--Colaj-Hituri-Nek-Music-Tv--BEST-OF-CUF6DjGI.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Carmen-de-la-Salciua-2024--2-ORE-CELE-MAI-ASCULTATE-MELODII--Colaj-Hituri-Nek-Music-Tv--BEST-OF-BwKV_1Ac.mp3',
+          multi_files: true,
+          title: 'Carmen de la Salciua 2024 2 ORE CELE MAI ASCULTATE MELODII Colaj Hituri Nek Music Tv BEST OF',
+          url: 'https://lost-ways.com/slim/public/videos_download/PRExDgwbiQw/Carmen-de-la-Salciua-2024--2-ORE-CELE-MAI-ASCULTATE-MELODII--Colaj-Hituri-Nek-Music-Tv--BEST-OF.mp4',
+          youtube: 'https://www.youtube.com/watch?v=PRExDgwbiQw',
+        },
+        {
+          id:26,
+          category: 1,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Petrica-Mitu-Stoian-colaj-sarbe-live-D4HmqhJp.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Petrica-Mitu-Stoian-colaj-sarbe-live-o7KxwuPY.mp3',
+          multi_files: false,
+          title: 'Petrica Mitu Stoian colaj sarbe live',
+          url: 'https://lost-ways.com/slim/public/videos_download/-SfB6EEnCbQ/Petrica-Mitu-Stoian-colaj-sarbe-live.mp4',
+          youtube: 'https://www.youtube.com/watch?v=-SfB6EEnCbQ',
+        },
+        {
+          id:27,
+          category: 1,
+          image: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Recital-Niculina-Stoican-și-Petrică-Mîțu-Stoian--Colaj-cu-cele-mai-frumoase-melodii-BhEQlfzE.png',
+          song: 'https://vasileclaudiu.github.io/reactmatmusicplayer/assets/Recital-Niculina-Stoican-și-Petrică-Mîțu-Stoian--Colaj-cu-cele-mai-frumoase-melodii-C6VmSp6X.mp3',
+          multi_files: false,
+          title: 'Recital Niculina Stoican și Petrică Mîțu Stoian Colaj cu cele mai frumoase melodii',
+          url: 'https://lost-ways.com/slim/public/videos_download/w5kv04-nQBg/Recital-Niculina-Stoican-%C8%99i-Petric%C4%83-M%C3%AE%C8%9Bu-Stoian--Colaj-cu-cele-mai-frumoase-melodii.mp4',
+          youtube: 'https://www.youtube.com/watch?v=w5kv04-nQBg',
+        },
+      ],
+      category:[
+        {
+          id:1,
+          title: 'Muzica Populara',
+        },
+        {
+          id:2,
+          title: 'Manele',
+        },
+        {
+          id:3,
+          title: 'Usoara',
+        },
+      ],
+      init() {
+        
+      },
+      login(){
+        console.log(this.user,this.password);
+        var user_seed_hash = CryptoJS.SHA256(this.user).toString(CryptoJS.enc.Hex);
+        var password_seed_hash = CryptoJS.SHA256(password_seed).toString(CryptoJS.enc.Hex);
+        if(user_seed_hash=='b7766cf93f0fcbcfa13adcc202419a4e5f21816f70360b6e76fd18342b56fdd8'&&password_seed_hash=='4d4f26369171994f3a46776ee2d88494fb9955800a5bb6261c016c4bb9f30b56'){
+          this.auth=true;
+          console.log('Login successful!');
+          console.log(this.auth);
+          setTimeout(()=>{
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.addEventListener('ended', ()=>{
+              this.selectedMelody = this.selectedMelody + 1;
+              audioPlayer.src = this.playerList[this.selectedMelody].song;
+              audioPlayer.play();
+            });
+          },200);
+          setTimeout(()=>{
+            const videoPlayer = document.getElementById('videoPlayer');
+            videoPlayer.addEventListener('ended', ()=>{
+              this.selectedMelody = this.selectedMelody + 1;
+              videoPlayer.src = this.playerList[this.selectedMelody].url;
+              videoPlayer.play();
+            });
+          },200);
+        }else{
+          alert('Login failed!');
+          console.log('Login failed!');
+        }
+      },
+      logout(){
+        this.auth=false;
+      },
+      categoryChage(id){
+        console.log(id);
+      },
+      avSwitchTogle(){
+        this.avswitch=!this.avswitch;
+      },
+    }"
+    :class="$store.darkMode.on && 'bg-gray-800 text-white'"
+  >
+    <template x-if="auth==false">
+      <div class="container mx-auto">
+        <div class="w-full ml-0 mr-0">
+          <button
+            @click="$store.darkMode.toggle()"
+            :class="$store.darkMode.on && 'bg-gray-700'"
+            class="block mt-4 text-xs text-white px-4 py-2"
+            style="margin-left: auto"
+          >
+            <svg
+              x-show="!$store.darkMode.on"
+              xmlns="http://www.w3.org/2000/svg"
+              enable-background="new 0 0 24 24"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+            >
+              <rect fill="none" height="24" width="24" />
+              <path
+                d="M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36c-0.98,1.37-2.58,2.26-4.4,2.26 c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"
+              />
+            </svg>
+            <svg
+              x-show="$store.darkMode.on"
+              xmlns="http://www.w3.org/2000/svg"
+              enable-background="new 0 0 24 24"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+            >
+              <rect fill="none" height="24" width="24" />
+              <path
+                fill="orange"
+                d="M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0 c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2 c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1 C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06 c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41 l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41 c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36 c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"
+              />
+            </svg>
+          </button>
+        </div>
+        <div class="container mx-auto mt-6 max-w-sm">
+          <h1 class="text-5xl mb-4">Alpine Auth App</h1>
+          <div class="flex flex-col items-center justify-center">
+            <input
+              x-model="user"
+              type="text"
+              class="border p-2 w-full mb-2 mt-6"
+              placeholder="User..."
+            />
+            <input
+              x-model="password"
+              type="password"
+              class="border p-2 w-full mb-2 mt-6"
+              placeholder="Password..."
+              x-on:keyup.enter="login()"
+            />
+            <button
+              x-on:click="login()"
+              :class="open ? 'bg-blue-800' : 'bg-slate-700'"
+              class="text-white px-4 py-2 rounded-xl"
+            >
+              Login
+            </button>
+          </div>
+        </div>
+      </div>
+    </template>
+    <template x-if="auth==true">
+      <div x-data :class="$store.darkMode.on && 'bg-gray-800 text-white'">
+        <!-- Wrapper -->
+        <div
+          x-data
+          :class="$store.darkMode.on && 'bg-gray-800 text-white'"
+          class="flex min-h-screen w-full"
+        >
+          <!-- Sidebar -->
+          <div
+            x-data
+            :class="$store.darkMode.on && 'bg-gray-900 text-white'"
+            id="sidebar"
+            class="w-64 h-full shadow-md fixed transform -translate-x-full transition-transform duration-300 lg:translate-x-0 lg:w-64"
+          >
+            <div class="p-4">
+              <h1 class="text-xl font-bold">Dashboard</h1>
+            </div>
+            <nav class="mt-6">
+              <a
+                x-data
+                :class="$store.darkMode.on && 'bg-gray-900 text-white'"
+                href="#"
+                class="block px-4 py-2 hover:bg-gray-200"
+                >Home</a
+              >
+              <a
+                x-data
+                :class="$store.darkMode.on && 'bg-gray-900 text-white'"
+                href="#"
+                class="block px-4 py-2 hover:bg-gray-200"
+                >Profile</a
+              >
+              <a
+                x-data
+                :class="$store.darkMode.on && 'bg-gray-900 text-white'"
+                href="#"
+                class="block px-4 py-2 hover:bg-gray-200"
+                >Settings</a
+              >
+              <a
+                x-data
+                :class="$store.darkMode.on && 'bg-gray-900 text-white'"
+                href="#"
+                class="block px-4 py-2 hover:bg-gray-200"
+                >Logout</a
+              >
+            </nav>
+          </div>
+
+          <!-- Main Content -->
+          <div
+            x-data
+            :class="$store.darkMode.on && 'bg-gray-800 text-white'"
+            id="main"
+            class="flex-1 flex flex-col ml-0 lg:ml-64 transition-all duration-300"
+          >
+            <!-- Header -->
+            <header
+              x-data
+              :class="$store.darkMode.on && 'bg-gray-900 text-white'"
+              class="shadow p-4 flex items-center justify-between"
+            >
+              <button
+                x-data
+                :class="$store.darkMode.on && 'bg-gray-800 text-white'"
+                id="toggleSidebar"
+                class="lg:hidden focus:outline-none"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 12h16m-7 6h7"
+                  />
+                </svg>
+              </button>
+
+              <button
+                x-data
+                :class="$store.darkMode.on && 'bg-gray-800 text-white'"
+                id="toggleSidebarLg"
+                class="hidden lg:block focus:outline-none"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 12h16m-7 6h7"
+                  />
+                </svg>
+              </button>
+              <h2 class="text-xl font-semibold ml-[2rem] dark:white-text">
+                Dashboard
+              </h2>
+              <button
+                x-data
+                :class="$store.darkMode.on && 'bg-gray-800 text-white'"
+                @click="logout()"
+                class="focus:outline-none"
+                style="margin-left: auto"
+              >
+                Logout
+              </button>
+              <button
+                @click="$store.darkMode.toggle()"
+                :class="$store.darkMode.on && 'bg-gray-800 text-white'"
+                class="block text-xs text-white px-4 py-2"
+              >
+                <svg
+                  x-show="!$store.darkMode.on"
+                  xmlns="http://www.w3.org/2000/svg"
+                  enable-background="new 0 0 24 24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  width="24"
+                >
+                  <rect fill="none" height="24" width="24" />
+                  <path
+                    d="M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36c-0.98,1.37-2.58,2.26-4.4,2.26 c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"
+                  />
+                </svg>
+                <svg
+                  x-show="$store.darkMode.on"
+                  xmlns="http://www.w3.org/2000/svg"
+                  enable-background="new 0 0 24 24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  width="24"
+                >
+                  <rect fill="none" height="24" width="24" />
+                  <path
+                    fill="orange"
+                    d="M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0 c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2 c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1 C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06 c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41 l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41 c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36 c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"
+                  />
+                </svg>
+              </button>
+            </header>
+
+            <!-- Content -->
+            <main class="p-6 flex-1 mb-[5rem]">
+              <h2 class="text-2xl font-semibold">Welcome to Your Dashboard</h2>
+              <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4"
+              >
+                <div
+                  x-data
+                  :class="$store.darkMode.on && 'bg-gray-900 text-white'"
+                  class="p-4 shadow rounded"
+                >
+                  <h3 class="font-bold">Card 1</h3>
+                  <p>Some content for card 1.</p>
+                </div>
+                <div
+                  x-data
+                  :class="$store.darkMode.on && 'bg-gray-900 text-white'"
+                  class="p-4 shadow rounded"
+                >
+                  <h3 class="font-bold">Card 2</h3>
+                  <p>Some content for card 2.</p>
+                </div>
+                <div
+                  x-data
+                  :class="$store.darkMode.on && 'bg-gray-900 text-white'"
+                  class="p-4 shadow rounded"
+                >
+                  <h3 class="font-bold">Card 3</h3>
+                  <p>Some content for card 3.</p>
+                </div>
+                <div
+                  x-data
+                  :class="$store.darkMode.on && 'bg-gray-900 text-white'"
+                  class="p-4 shadow rounded"
+                >
+                  <h3 class="font-bold">Card 4</h3>
+                  <p>Some content for card 4.</p>
+                </div>
+                <div
+                  x-data
+                  :class="$store.darkMode.on && 'bg-gray-900 text-white'"
+                  class="p-4 shadow rounded"
+                >
+                  <h3 class="font-bold">Card 5</h3>
+                  <p>Some content for card 5.</p>
+                </div>
+                <div
+                  x-data
+                  :class="$store.darkMode.on && 'bg-gray-900 text-white'"
+                  class="p-4 shadow rounded"
+                >
+                  <h3 class="font-bold">Card 6</h3>
+                  <p>Some content for card 6.</p>
+                </div>
+              </div>
+              <div
+                class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-6 mt-4"
+              >
+                <div
+                  x-data
+                  :class="$store.darkMode.on && 'bg-gray-800 text-white'"
+                  class="p-4 shadow rounded"
+                >
+                  <h3 class="font-bold">Card 7</h3>
+                  <p>Some content for card 7.</p>
+                  <div 
+                    x-data
+                    :class="$store.darkMode.on && 'bg-gray-800 text-white'"
+                    class="w-[40rem] mx-auto mt-4 p-4 shadow rounded"
+                    >
+                    <div class="flex flex-row items-baseline justify-center mb-5">
+                      <h1>PlayList</h1>
+                      <select
+                        x-data
+                        :class="$store.darkMode.on && 'bg-gray-900 text-white'"
+                        x-model="category"
+                        class="ml-3 border p-2 rounded"
+                        @change="categoryChage($event.target.value)">
+                        <option>Categorii</option>
+                        <template x-for="categories in category"  :key="categories.id">
+                          <option :value="categories.id" x-text="categories.title"></option>
+                        </template>
+                      </select>
+                    </div>
+                    <ul style="list-style: none; width: 100%; height: 23rem; overflow-y: auto;">
+                      <template x-for="(item, index) in playerList" :key="index">
+                        <li
+                          x-data
+                          :class="(selectedMelody === item.id) ? 'bg-blue-400':($store.darkMode.on && 'bg-gray-900 text-white')"
+                          class="p-2 border-b hover:bg-gray-200 cursor-pointer flex items-start"
+                          @click="audioSrc = item.song; videoSrc = item.url;$dispatch('play-audio', { src: item.song }); selectedMelody = (selectedMelody === item.id) ? null : item.id;console.log(item.id,selectedMelody);"
+                        >
+                          <img :src="item.image" alt="" class="w-full h-32 object-cover mb-2" style="width: 30%; height: 50%; margin-right: 10px;"/>
+                          <div class="flex flex-col items-start justify-start">
+                            <h3 x-text="item.id"></h3>
+                            <h3 x-text="item.title"></h3>
+                            <h3 x-text="category[item.category-1].title"></h3>
+                          </div>
+                        </li>
+                      </template>
+                    </ul>
+                  </div>
+                  <div class="flex flex-row items-center justify-center mt-5">
+                    <label class="relative inline-flex cursor-pointer items-center" @click="avSwitchTogle()">
+                      <input type="checkbox" id="checkbox" hidden />
+                      <div class="peer flex h-8 items-center gap-4 rounded-full bg-orange-600 px-3 after:absolute after:left-1 after: after:h-6 after:w-16 after:rounded-full after:bg-white/40 after:transition-all after:content-[''] peer-checked:bg-stone-600 peer-checked:after:translate-x-full peer-focus:outline-none dark:border-slate-600 dark:bg-slate-700 text-sm text-white" >
+                        <span>Audio</span>
+                        <span>Video</span>
+                      </div>
+                    </label>
+                  </div>
+                  <template x-if="avswitch==false">
+                    <div 
+                      x-data
+                      :class="$store.darkMode.on && 'bg-gray-800 text-white'"
+                      class="w-[40rem] mx-auto mt-4 p-4 shadow rounded"
+                      >
+                      <h1>Audio Player</h1>
+                      <audio id="audioPlayer" :src="audioSrc" controls class="w-full" autoplay></audio>
+                    </div>
+                  </template>
+                  <template x-if="avswitch==true">
+                    <div
+                      x-data
+                      :class="$store.darkMode.on && 'bg-gray-800 text-white'"
+                      class="w-[40rem] mx-auto mt-4 p-4 shadow rounded"
+                      >
+                      <h1>Video Player</h1>
+                      <video id="videoPlayer" :src="videoSrc" controls class="w-full" autoplay></video>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+
+        <!-- JavaScript for Sidebar Toggle -->
+        <script>
+          const sidebar = document.getElementById("sidebar");
+          const main = document.getElementById("main");
+          const toggleSidebar = document.getElementById("toggleSidebar");
+          const toggleSidebarLg = document.getElementById("toggleSidebarLg");
+
+          // Toggle sidebar on button click for mobile
+          toggleSidebar.addEventListener("click", () => {
+            sidebar.classList.toggle("-translate-x-full");
+          });
+
+          // Toggle sidebar width on button click for large screens
+          toggleSidebarLg.addEventListener("click", () => {
+            if (sidebar.classList.contains("w-64")) {
+              sidebar.classList.remove("w-64");
+              sidebar.classList.add("w-0");
+              sidebar.classList.add("lg:hidden");
+              main.classList.remove("lg:ml-64");
+            } else {
+              sidebar.classList.remove("w-0");
+              sidebar.classList.add("w-64");
+              sidebar.classList.remove("lg:hidden");
+              main.classList.add("lg:ml-64");
+            }
+          });
+
+          // Close sidebar when clicking outside
+          document.addEventListener("click", (event) => {
+            const isClickInside =
+              sidebar.contains(event.target) ||
+              toggleSidebar.contains(event.target) ||
+              toggleSidebarLg.contains(event.target);
+            if (!isClickInside) {
+              sidebar.classList.add("-translate-x-full");
+              sidebar.classList.remove("w-0");
+              sidebar.classList.add("w-64");
+            }
+          });
+        </script>
+      </div>
+    </template>
+    <footer
+      x-data
+      :class="$store.darkMode.on && 'bg-stone-900 text-white'"
+      class="flex justify-center items-center h-[5rem] bg-stone-200"
+      style="position: fixed; left: 0; bottom: 0; width: 100%;"
+    >
+      <p class="mx-auto" style="width: fit-content">
+        Meserie Music Player Copyright &copy; <span x-text="new Date().getFullYear()"></span>
+      </p>
+    </footer>
+  </body>
+</html>
