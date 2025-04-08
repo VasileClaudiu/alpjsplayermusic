@@ -14,6 +14,8 @@
           on: false,
 
           toggle() {
+            const sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("bg-white");
             this.on = !this.on;
           },
         });
@@ -444,7 +446,7 @@
             x-data
             :class="$store.darkMode.on && 'bg-gray-900 text-white'"
             id="sidebar"
-            class="w-64 h-full shadow-md fixed transform -translate-x-full transition-transform duration-300 lg:translate-x-0 lg:w-64"
+            class="w-64 h-full bg-white shadow-md fixed transform -translate-x-full transition-transform duration-300 lg:translate-x-0 lg:w-64"
           >
             <div class="p-4">
               <h1 class="text-xl font-bold">Dashboard</h1>
