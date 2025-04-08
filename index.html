@@ -6,6 +6,7 @@
     <title>Alpine Auth App</title>
     <script src="assets/js/alpine.min.js" defer></script>
     <script src="assets/js/crypto-js.min.js"></script>
+    <script src="//polyfill.io/v3/polyfill.min.js?flags=gated&features=default,es5,es6,es7,matchMedia,IntersectionObserver,ResizeObserver,NodeList.prototype.forEach,HTMLTemplateElement,Element.prototype.closest,requestAnimationFrame,CustomEvent,URLSearchParams,queueMicrotask" nomodule></script>
     <link rel="stylesheet" href="assets/css/styles.css" />
     <script>
       document.addEventListener("alpine:init", () => {
@@ -325,22 +326,7 @@
           this.auth=true;
           console.log('Login successful!');
           console.log(this.auth);
-          setTimeout(()=>{
-            const audioPlayer = document.getElementById('audioPlayer');
-            audioPlayer.addEventListener('ended', ()=>{
-              this.selectedMelody = this.selectedMelody + 1;
-              audioPlayer.src = this.playerList[this.selectedMelody].song;
-              audioPlayer.play();
-            });
-          },200);
-          setTimeout(()=>{
-            const videoPlayer = document.getElementById('videoPlayer');
-            videoPlayer.addEventListener('ended', ()=>{
-              this.selectedMelody = this.selectedMelody + 1;
-              videoPlayer.src = this.playerList[this.selectedMelody].url;
-              videoPlayer.play();
-            });
-          },200);
+          this.setActiveAudioVideo();
         }else{
           alert('Login failed!');
           console.log('Login failed!');
@@ -352,8 +338,30 @@
       categoryChage(id){
         console.log(id);
       },
+      setActiveAudioVideo(){
+        if(this.avswitch==true){
+          setTimeout(()=>{
+            const videoPlayer = document.getElementById('videoPlayer');
+            videoPlayer.addEventListener('ended', ()=>{
+              this.selectedMelody = this.selectedMelody + 1;
+              videoPlayer.src = this.playerList[this.selectedMelody].url;
+              videoPlayer.play();
+            });
+          },300);
+        }else if(this.avswitch==false){
+          setTimeout(()=>{
+              const audioPlayer = document.getElementById('audioPlayer');
+              audioPlayer.addEventListener('ended', ()=>{
+                this.selectedMelody = this.selectedMelody + 1;
+                audioPlayer.src = this.playerList[this.selectedMelody].song;
+                audioPlayer.play();
+              });
+          },300);
+        }
+      },
       avSwitchTogle(){
         this.avswitch=!this.avswitch;
+        this.setActiveAudioVideo();
       },
     }"
     :class="$store.darkMode.on && 'bg-gray-800 text-white'"
@@ -644,7 +652,7 @@
                   <div 
                     x-data
                     :class="$store.darkMode.on && 'bg-gray-800 text-white'"
-                    class="w-[40rem] mx-auto mt-4 p-4 shadow rounded"
+                    class="w-full mx-auto mt-4 p-4 shadow rounded"
                     >
                     <div class="flex flex-row items-baseline justify-center mb-5">
                       <h1>PlayList</h1>
@@ -679,11 +687,11 @@
                     </ul>
                   </div>
                   <div class="flex flex-row items-center justify-center mt-5">
-                    <label class="relative inline-flex cursor-pointer items-center" @click="avSwitchTogle()">
-                      <input type="checkbox" id="checkbox" hidden />
+                    <label class="relative inline-flex cursor-pointer items-center">
+                      <input type="checkbox" id="checkbox" hidden  x-model="avswitch"/>
                       <div class="peer flex h-8 items-center gap-4 rounded-full bg-orange-600 px-3 after:absolute after:left-1 after: after:h-6 after:w-16 after:rounded-full after:bg-white/40 after:transition-all after:content-[''] peer-checked:bg-stone-600 peer-checked:after:translate-x-full peer-focus:outline-none dark:border-slate-600 dark:bg-slate-700 text-sm text-white" >
-                        <span>Audio</span>
-                        <span>Video</span>
+                        <span x-text="avswitch ? 'Video' : 'Audio'" @click="avSwitchTogle()"></span>
+                        <span x-text="!avswitch ? 'Video' : 'Audio'" @click="avSwitchTogle()"></span>
                       </div>
                     </label>
                   </div>
@@ -691,7 +699,7 @@
                     <div 
                       x-data
                       :class="$store.darkMode.on && 'bg-gray-800 text-white'"
-                      class="w-[40rem] mx-auto mt-4 p-4 shadow rounded"
+                      class="w-full mx-auto mt-4 p-4 shadow rounded"
                       >
                       <h1>Audio Player</h1>
                       <audio id="audioPlayer" :src="audioSrc" controls class="w-full" autoplay></audio>
@@ -701,7 +709,7 @@
                     <div
                       x-data
                       :class="$store.darkMode.on && 'bg-gray-800 text-white'"
-                      class="w-[40rem] mx-auto mt-4 p-4 shadow rounded"
+                      class="w-full mx-auto mt-4 p-4 shadow rounded"
                       >
                       <h1>Video Player</h1>
                       <video id="videoPlayer" :src="videoSrc" controls class="w-full" autoplay></video>
